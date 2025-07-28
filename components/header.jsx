@@ -1,13 +1,5 @@
 import React from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { SignedOut } from "@clerk/nextjs";
-import { SignInButton } from "@clerk/nextjs"; 
-import { SignUpButton } from "@clerk/nextjs";
-import { SignedIn } from "@clerk/nextjs";
-import { UserButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
-import { checkUser } from "@/lib/checkUser";
+import { Button } from "./ui/button";
 import {
   Calendar,
   CreditCard,
@@ -15,24 +7,34 @@ import {
   Stethoscope,
   User,
 } from "lucide-react";
+import Link from "next/link";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { checkUser } from "@/lib/checkUser";
+import { Badge } from "./ui/badge";
+//import { checkAndAllocateCredits } from "@/actions/credits";
+import Image from "next/image";
 
-const Header = async () => {
+export default async function Header() {
+  const user = await checkUser();
+  if (user?.role === "PATIENT") {
+    await checkAndAllocateCredits(user);
+  }
 
-  await checkUser();  
   return (
     <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-10 supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/">
+        <Link href="/" className="flex items-center gap-2 cursor-pointer">
           <Image
             src="/logo-single.png"
-            alt="PAMS Logo"
-            width={300}
-            height={70}
+            alt="Medimeet Logo"
+            width={200}
+            height={60}
             className="h-10 w-auto object-contain"
           />
         </Link>
 
-        <div className="flex items-center space-x-2 ml-auto">
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-2">
           <SignedIn>
             {/* Admin Links */}
             {user?.role === "ADMIN" && (
@@ -146,6 +148,4 @@ const Header = async () => {
       </nav>
     </header>
   );
-};
-
-export default Header;
+}

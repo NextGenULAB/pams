@@ -149,29 +149,24 @@ export default function Home() {
             Hear from patients and doctors who use our platform
             </p>
         </div>
-        <div className= "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => {
-            return (
-            <Card key = {index} className="border-emerald-900/20 hover:border-emerald-800/40
-            transition-all duration-300"
-            >
-              
-               <CardContent>
-                <div>
-                  <div>
-                    <span>{testimonial.initials}
-                    </span>
-                    </div>
-                    <div>
-                      <h4>{testimonial.name}</h4>
-                      <p>{testimonial}</p>
-                    </div>
-                </div>
-               </CardContent>
-                </Card>
-            );
-
-          })}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  {testimonials.map((testimonial, index) => {
+    return (
+      <Card key={index} className="border-emerald-900/20 hover:border-emerald-800/40 transition-all duration-300">
+        <CardContent>
+          <div>
+            <div>
+              <span>{testimonial.initials}</span>
+            </div>
+            <div>
+              <h4>{testimonial.name}</h4>
+              <p>{testimonial.role}</p> {/* Changed from testimonial to testimonial.role */}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  })}
         </div>
         </div>
         </section> 

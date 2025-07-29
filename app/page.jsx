@@ -1,9 +1,10 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Link from 'next/link';
 import { creditBenefits, features } from "@/lib/data";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Stethoscope } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, Check, Stethoscope } from "lucide-react";
 
 export default function Home() {
   return (
@@ -30,7 +31,7 @@ export default function Home() {
              className="bg-emerald-600 text-white hover:bg-emerald-700">
               
               <Link href={"/onboarding"}>
-              Get Started<ArrowRight className="ml-2 h-4 w-4"/>
+              Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
               </Button>
               <Button asChild
@@ -52,29 +53,29 @@ export default function Home() {
         </div>
         </section>
 
-        <section classname="py-20 bg-muted/30">
-        <div classname="container mx-auto px-4">
-        <div classname="text-center mb-16">
-          <h2 classname="text-3xl md:text-4xl font-bold text-white mb-4">
+        <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             How it works! </h2>
-          <p classname="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Our Platform makes healthcare easy.</p>
         </div>
-        <div classname= "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className= "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index)=>{
             return (
-            <Card key = {index} classname="border-emerald-900/20 hover:border-emerald-800/40
+            <Card key = {index} className="border-emerald-900/20 hover:border-emerald-800/40
             transition-all duration-300"
             >
-              <CardHeader classname="pb-2">
-                <div classname="bg-emerald-900/20 p-3 rounded-lg w-fit mb-4">
+              <CardHeader className="pb-2">
+                <div className="bg-emerald-900/20 p-3 rounded-lg w-fit mb-4">
                 {feature.icon}</div>
                <CardTitle className="text-xl font-semibold text-white">  {feature.title} 
 
                </CardTitle>
                </CardHeader>
                <CardContent>
-                <p classname="text-muted-foreground">{feature.description}</p>
+                <p className="text-muted-foreground">{feature.description}</p>
                 </CardContent>
                 </Card>
             );
@@ -84,16 +85,16 @@ export default function Home() {
         </div>
         </section> 
 
-        <section classname="py-20">
-        <div classname="container mx-auto px-4">
-        <div classname="text-center mb-16">
-          <Badge classname="bg-emerald-900/30 border-emerald-700/30 px-4 py-1 
+        <section className="py-20">
+        <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <Badge className="bg-emerald-900/30 border-emerald-700/30 px-4 py-1 
           text-emerald-400 text-sm font-medium mb-4">
             Affordable Healthcare
           </Badge>
-          <h2 classname="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Consultation Packages </h2>
-          <p classname="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Choose the perfect consultation package that fits your healthcare needs.
             </p>
         </div>
@@ -102,20 +103,20 @@ export default function Home() {
           {/*Pricing Table*/}
                 <Card className="mt-12 bg-muted/20 boreder-emerald-900/30">
               <CardHeader>
-                <CardTitle classname="text-xl font-semibold text-white flex
+                <CardTitle className="text-xl font-semibold text-white flex
                  items-center">
-                  <Stethoscope classname="h-5 w-5 mr-2 text-emerald-400"/>
+                  <Stethoscope className="h-5 w-5 mr-2 text-emerald-400"/>
                   How our credit system works</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul classname="space-y-3">
+                <ul className="space-y-3">
                    {creditBenefits.map((benefit, index)=>{
-                    return ( <li key={index} classname="flex items-start">
-                      <div classname="mr-3 mt-1 bg-emerald 900/20 p-1 rounded-full">
+                    return ( <li key={index} className="flex items-start">
+                      <div className="mr-3 mt-1 bg-emerald 900/20 p-1 rounded-full">
                         <Check className="h-4 w-4 text-emerald-400"/>
                       </div>
                       <p
-                        classname="text-muted-foreground"
+                        className="text-muted-foreground"
                       dangerouslySetInnerHTML={{__html: benefit}}
                       />
                     </li>

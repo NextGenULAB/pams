@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { features } from "@/lib/data";
+import { creditBenefits, features } from "@/lib/data";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Stethoscope } from "lucide-react";
 
@@ -108,7 +108,21 @@ export default function Home() {
                   How our credit system works</CardTitle>
               </CardHeader>
               <CardContent>
-                <p>Card Content</p>
+                <ul classname="space-y-3">
+                   {creditBenefits.map((benefit, index)=>{
+                    return ( <li key={index} classname="flex items-start">
+                      <div classname="mr-3 mt-1 bg-emerald 900/20 p-1 rounded-full">
+                        <Check className="h-4 w-4 text-emerald-400"/>
+                      </div>
+                      <p
+                        classname="text-muted-foreground"
+                      dangerouslySetInnerHTML={{__html: benefit}}
+                      />
+                    </li>
+                   );
+                   })}
+                   </ul>
+              
               </CardContent>
             
             </Card>

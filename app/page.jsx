@@ -85,6 +85,7 @@ export default function Home() {
         </div>
         </section> 
 
+
         <section className="py-20">
         <div className="container mx-auto px-4">
         <div className="text-center mb-16">
@@ -129,7 +130,52 @@ export default function Home() {
             </Card>
         </div>
         </div>
-        </section>   
+        </section> 
+
+        <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <Badge 
+          variant="outline"
+          className="bg-emerald-900/30 border-emerald-700/30 px-4 py-1 text-emerald-400 text-sm font-medium mb-4"
+          >
+            Success Stories
+          </Badge>
+
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            What Our Users Say
+            </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Hear from patients and doctors who use our platform
+            </p>
+        </div>
+        <div className= "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {testimonials.map((testimonial, index) => {
+            return (
+            <Card key = {index} className="border-emerald-900/20 hover:border-emerald-800/40
+            transition-all duration-300"
+            >
+              
+               <CardContent>
+                <div>
+                  <div>
+                    <span>{testimonial.initials}
+                    </span>
+                    </div>
+                    <div>
+                      <h4>{testimonial.name}</h4>
+                      <p>{testimonial}</p>
+                    </div>
+                </div>
+               </CardContent>
+                </Card>
+            );
+
+          })}
+        </div>
+        </div>
+        </section> 
+
     </div>
   );
 }

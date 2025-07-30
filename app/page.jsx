@@ -153,16 +153,19 @@ export default function Home() {
   {testimonials.map((testimonial, index) => {
     return (
       <Card key={index} className="border-emerald-900/20 hover:border-emerald-800/40 transition-all duration-300">
-        <CardContent>
-          <div>
-            <div>
-              <span>{testimonial.initials}</span>
+        <CardContent className="pt-6">
+          <div className="flex items-center mb-4">
+            <div className="w-12 h-12 rounded-full bg-emerald-900/20 flex items-center justify-center mr-4">
+              <span className="text-emerald-400 font-bold">{testimonial.initials}</span>
             </div>
             <div>
-              <h4>{testimonial.name}</h4>
-              <p>{testimonial.role}</p> {/* Changed from testimonial to testimonial.role */}
+              <h4 className="font-semibold text-white">{testimonial.name}</h4>
+              <p className="text-sm text-muted-foreground">{testimonial.role}</p>
             </div>
           </div>
+          <p className="text-muted-foreground">
+            &quot;{testimonial.quote}&quot;
+          </p>
         </CardContent>
       </Card>
     );
@@ -170,6 +173,42 @@ export default function Home() {
         </div>
         </div>
         </section> 
+
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <Card className="bg-gradient-to-r from-emerald-900/30 to-emerald-950/20 border-emerald-800/20">
+            <CardContent className="p-8 md:p-12 lg:p-16 relative overflow-hidden">
+              <div className="max-w-2x1 relative z-10">
+                <h2 className="ttext-3xl md:text-4xl font-bold text-white mb-6">
+                  Ready to take control of your health?
+                  </h2>
+                  <p className="text-lg text-muted-foreground mb-8">
+                    Join thousands of users who have simplified their healthcare journey with out platform. Get Started today and experience the future of healthcare.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button
+                      asChild
+                      size="lg"
+                      className="bg-emerald-600 text-white hover:bg-emerald-700">
+                        <Link href="/signup">Sign Up Now</Link>
+                        </Button>
+                        <Button
+                        asChild
+                        variant="outline"
+                        size="lg"
+                        className="border-emerald-700/30 hover:bg-muted/80">
+                          <Link href="#pricing">View Pricing</Link>
+                          </Button>
+                          </div>
+              </div>
+
+              <div className="absolute right-0 top-0 w-[300px] h-[300px] bg-emerald-800/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+
+              <div className="absolute left-0 bottom-0 w-[200px] h-[200px] bg-emerald-700/10 rounded-full blur-3xl -ml-10 -mb-10"></div>
+            </CardContent>
+            </Card> 
+            </div>
+        </section>
 
     </div>
   );

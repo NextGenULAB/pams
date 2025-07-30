@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
-import { creditBenefits, features } from "@/lib/data";
+import { creditBenefits, features, testimonials } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Check, Stethoscope } from "lucide-react";
 

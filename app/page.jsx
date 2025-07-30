@@ -190,7 +190,7 @@ export default function Home() {
                       asChild
                       size="lg"
                       className="bg-emerald-600 text-white hover:bg-emerald-700">
-                        <Link href="/signup">Sign Up Now</Link>
+                        <Link href="/sign-up">Sign Up Now</Link>
                         </Button>
                         <Button
                         asChild

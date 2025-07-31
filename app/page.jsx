@@ -199,7 +199,7 @@ export default function Home() {
                         variant="outline"
                         size="lg"
                         className="border-emerald-700/30 hover:bg-muted/80">
-                          <Link href="#pricing">View Pricing</Link>
+                          <Link href="pricing">View Pricing</Link>
                           </Button>
                           </div>
               </div>

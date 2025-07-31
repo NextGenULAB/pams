@@ -1,5 +1,6 @@
 import React from 'react'
 import { getCurrentUser } from "@/actions/onboarding";
+import { redirect } from 'next/navigation';
 
 export const metadata = {
   title: 'Onboarding - PAMS',

@@ -1,13 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button"; 
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"; 
-import { User, Stethoscope } from "lucide-react"; 
+import { User, Stethoscope, Loader2 } from "lucide-react"; 
+import { setUserRole } from "@/actions/onboarding";
+import { useRouter } from "next/navigation";
+import useFetch from "@/hooks/use-fetch";
+import { toast } from "sonner";
 
 const doctorFormSchema = z.object({ 
 speciality: z.string().min(1, "speciality is required"),
@@ -27,6 +31,9 @@ description: z
 
 const OnboardingPage = () => {
     const [step, setStep] = useState("choose-role");
+    const router = useRouter()
+
+  const {data, fn: submitUserRole, loading} = useFetch(setUserRole);
     
  const { 
     register,
@@ -46,11 +53,27 @@ const OnboardingPage = () => {
 
  const specialityValue = watch("speciality");
   
+ const handlePatientSelection= async() => {
+    if (loading) return;
+
+    const formData = new FormData();
+    formData.append("role" , "PATIENT");
+
+    await submitUserRole(formData)
+ };
+
+ useEffect(() => {
+    if (data && data?.success){
+        toast.success("Role Selected!");
+        router.push(data.redirect);
+    }
+
+ }, [data])
  
  if (step === "choose-role"){ 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <Card className = "border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all">
+    <Card onClick= {()=> !loading && handlePatientSelection()} className = "border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all">
         
         <CardContent className = "pt-6 pb-6 flex flex-col items-center text-center">
             <div className="p-4 bg-emerald-900/20 rounded-full mb-4">
@@ -62,12 +85,17 @@ const OnboardingPage = () => {
             <CardDescription className="mb-4">
                 Book appointments,consult with doctors, and manage your healthcare journey
             </CardDescription>
-            <Button className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700">
-                Continue as a Patient</Button>
+            <Button className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
+                { loading? (
+                    <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing... </>
+                     ) : ("Continue as a Patient") }</Button>
         </CardContent>
     </Card> 
     
-     <Card className = "border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all">
+     <Card
+     onClick={()=> !loading && setStep("doctor-form")}
+     className = "border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all">
         
         <CardContent className = "pt-6 pb-6 flex flex-col items-center text-center">
             <div className="p-4 bg-emerald-900/20 rounded-full mb-4">

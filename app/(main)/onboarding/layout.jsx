@@ -5,8 +5,8 @@ export const metadata = {
   description: "Complete your profile to get started with PAMS",
 };
 
-const OnboardingLayout = () => {
-    return <div>OnboardingLayout</div>;
+const OnboardingLayout = ({ children }) => {
+    return <div>{children}</div>;
 };
 
 export default OnboardingLayout;

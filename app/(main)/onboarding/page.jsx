@@ -107,7 +107,8 @@ const OnboardingPage = () => {
             <CardDescription className="mb-4">
                 Create your profession profile, set your availability, and provide consultations
             </CardDescription>
-            <Button className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700">
+            <Button disabled={loading}
+            className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700">
                 Continue as a Doctors
                 </Button>
         </CardContent>

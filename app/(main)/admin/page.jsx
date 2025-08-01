@@ -1,15 +1,25 @@
-import React from 'react'
-import { TabsContent } from "@/components/ui/tabs" ;
+import { TabsContent } from "@/components/ui/tabs";
+//import { promise } from "zod";
+import { getPendingDoctors, getVerifiedDoctors } from "@/actions/admin";
+import VerifiedDoctors from "./_components/verified-doctors";
+import PendingDoctors from "./_components/pending-doctors";
 
-const AdminPage = () => {
+const AdminPage = async () => {
+  const [pendingDoctorsData, verifiedDoctorsData] = await Promise.all([
+    getPendingDoctors(),
+    getVerifiedDoctors(),
+  ]);
+
   return (
-    <div>
-         <TabsContent value="account">
-          Make changes to your account here.
-        </TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
-    </div>
+    <>
+      <TabsContent value="pending" className="border-none p-0">
+        <PendingDoctors doctors={pendingDoctorsData.doctors || []} />
+      </TabsContent>
+      <TabsContent value="doctors" className="border-none p-0">
+        <VerifiedDoctors doctors={verifiedDoctorsData.doctors || []} />
+      </TabsContent> 
+    </>
   );
 };
 
-export default AdminPage; 
+export default AdminPage;

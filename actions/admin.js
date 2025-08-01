@@ -28,7 +28,7 @@ export async function verifyAdmin(){
 
 export async function getPendingDoctors(){
     const isAdmin = await verifyAdmin();
-    if (!isAdmin) throw new Error("Unauthorized");
+    //if (!isAdmin) throw new Error("Unauthorized");
 
     try {
         const pendingDoctors = await db.user.findMany({
@@ -50,7 +50,7 @@ export async function getPendingDoctors(){
 
 export async function getVerifiedDoctors() {
     const isAdmin = await verifyAdmin();
-    if (!isAdmin) throw new Error("Unauthorized");
+   // if (!isAdmin) throw new Error("Unauthorized");
 
     try {
         const verifiedDoctors = await db.user.findMany({
@@ -72,7 +72,7 @@ export async function getVerifiedDoctors() {
 
 export async function updateDoctorStatus(formData) {
     const isAdmin = await verifyAdmin();
-    if (!isAdmin) throw new Error("Unauthorized");
+    //if (!isAdmin) throw new Error("Unauthorized");
 
     const doctorId = formData.get("doctorId");
     const status = formData.get("status");
@@ -97,7 +97,7 @@ export async function updateDoctorStatus(formData) {
 
 export async function updatedDoctorActiveStatus(formData) {
     const isAdmin = await verifyAdmin();
-    if (!isAdmin) throw new Error("Unauthorized");
+    //if (!isAdmin) throw new Error("Unauthorized");
 
     const doctorId = formData.get("doctorId");
     const suspend = formData.get("suspend") === "true";

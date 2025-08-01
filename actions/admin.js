@@ -49,7 +49,7 @@ export async function getPendingDoctors(){
 
 
 export async function getVerifiedDoctors() {
-    const isAdmin = await verifyDoctor();
+    const isAdmin = await verifyAdmin();
     if (!isAdmin) throw new Error("Unauthorized");
 
     try {

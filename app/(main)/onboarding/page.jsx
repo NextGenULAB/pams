@@ -12,6 +12,9 @@ import { setUserRole } from "@/actions/onboarding";
 import { useRouter } from "next/navigation";
 import useFetch from "@/hooks/use-fetch";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SPECIALTIES } from "@/lib/specialities";
 
 const doctorFormSchema = z.object({ 
 speciality: z.string().min(1, "speciality is required"),
@@ -117,7 +120,49 @@ const OnboardingPage = () => {
     );
  }
  if (step === "doctor-form"){
-    return <>doctor form</>;
+    return (
+    <Card
+     className = "border-emerald-900/20">
+        
+        <CardContent className = "pt-6">
+            <div classname="mb-6">
+            
+           <CardTitle className= "text-2xl font-bold text-white mb-2">
+            Complite Your Profile
+            </CardTitle>
+            <CardDescription >
+                Please provide your professional details and verification
+            </CardDescription>
+            </div>
+            <form className="space-y-6">
+                <div className="space-y-2">
+            <Label htmlFor="speciality">Medical Speciality</Label>
+            <Select>
+                <SelectTrigger id="speciality">
+                    <SelectValue placeholder="select your speciality" />
+                </SelectTrigger>
+                <SelectContent>
+                    {SPECIALTIES.map((spec)=>{
+                    return (<SelectItem
+                         key={spec.name}
+                        value={spec.name}
+                        className="flex items-center gap-2"
+                    >
+                     <span className="text-emerald-400"> {spec.icon} </span>
+                     {spec.name}  
+                    </SelectItem>
+                    );
+                    })}
+                   
+                   
+                </SelectContent>
+                </Select>
+                </div>
+
+            </form>
+        </CardContent>
+    </Card>
+    );
  }
 };
 

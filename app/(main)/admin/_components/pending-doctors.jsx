@@ -1,19 +1,30 @@
 "use client";
-import { updateDoctorStatus } from "@/actions/admin";
-import useFetch from "@/hooks/use-fetch";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Check, X, User, Medal, FileText, ExternalLink } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import {ExternalLink,FileText, Madal,User } from "lucide-react";
+import { updateDoctorStatus } from "@/actions/admin";
+import useFetch from "@/hooks/use-fetch";
+import { useEffect } from "react";
 import { BarLoader } from "react-spinners";
 
 const PendingDoctors = ({ doctors }) => {
@@ -163,7 +174,7 @@ const PendingDoctors = ({ doctors }) => {
           </p>
          </div>
          <div className="space-y-1">
-          <h4 className="text-sm font-medium text-muted text-muted-foreground">
+          <h4 className="text-sm font-medium text-muted-foreground">
             Years of Experience
           </h4>
           <p className="text-white">

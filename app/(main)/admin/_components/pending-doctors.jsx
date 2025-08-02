@@ -35,6 +35,22 @@ const PendingDoctors = ({ doctors }) => {
     data,
     fn: submitStatusUpdate,
   } = useFetch(updateDoctorStatus);
+        
+      const handleUpdateStatus = async (doctorId, status) => {
+        if (loading) return;
+
+        const formData = new FormData();
+        formData.append("doctorId", doctorId);
+        formData.append("status", status);
+
+        await submitStatusUpdate(formData);
+};
+
+  useEffect(() => {
+  if (data && data?.success) {
+    handleCloseDialog();
+  }
+}, [data]);
 
   const handleViewDetails = (doctor) =>{
     setSelectedDoctor(doctor);
@@ -215,7 +231,32 @@ const PendingDoctors = ({ doctors }) => {
             </p>
             </div>
           </div>
-       {true && <BarLoader width={"100%"} color="#36d7b7" />}
+       {loading && <BarLoader width={"100%"} color="#36d7b7" />}
+      <DialogFooter className="flex sm:justify-between">
+                <Button
+          variant="destructive"
+          disabled={loading}
+          className="bg-red-600 hover:bg-red-700"
+          onClick={() =>
+            handleUpdateStatus(selectedDoctor.id, "REJECTED")
+          }
+        >
+          <X className="mr-2 h-4 w-4" />
+          Reject
+        </Button>
+        <Button
+         onClick={() =>
+            handleUpdateStatus(selectedDoctor.id, "VERIFIED")
+          }
+          disabled={loading}
+          className="bg-emerald-600 hover:bg-emerald-700"
+        >
+          <Check className="mr-2 h-4 w-4" />
+          Approve
+        </Button>
+      </DialogFooter>
+
+
       </DialogContent>
        </Dialog>
      )}

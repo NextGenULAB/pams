@@ -1,6 +1,6 @@
 "use server"
 
-// import { db } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
 export async function setAvailabilitySlots(formData) 
@@ -22,6 +22,48 @@ export async function setAvailabilitySlots(formData)
         if (!doctor) {
             throw new Error("Doctor not found");
         }
+
+        // Get form data
+        const startTime = formData.get("startTime");
+        const endTime = formData.get("endTime");
+
+        //Validate input
+        if (!startTime || !endTime) {
+            throw new Error("Start time and end time are required");
+        }
+
+        if (startTime >= endTime) {
+            throw new Error("Start time must be before end time");
+        }
+
+        const existingSlots = await db.availability.findMany({
+            where: {
+                doctorId:  doctor.id,
+
+            },
+        });
+
+        if(existingSlots.length>0){
+            const slotsWithNoAppointments = existingSlots.filter(
+                (slot) => !slot.appointment
+
+            ) ;
+
+            if (slotsWithNoAppointments.length > 0) {
+                await db.availability.deleteMany({
+                    where: {
+                        id: {
+                            in: slotsWithNoAppointments.map((slot) =>slot.id),
+                        },
+                    },
+                });
+            }
+
+            
+
+        }
+
+
     } catch (error) {}
 
     } 

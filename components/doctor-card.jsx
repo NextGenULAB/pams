@@ -1,5 +1,8 @@
 import React from "react"
 import { Card, CardContent } from "./ui/card";
+import { Badge, Calendar, Star, User } from "lucide-react";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 const DoctorCard= ({ doctor }) => {
     return (
@@ -11,7 +14,7 @@ const DoctorCard= ({ doctor }) => {
                     <img 
                     src={doctor.imageUrl}
                     alt={doctor.name}
-                    className="w-12 h-12 rounded-full object-cover"/>
+                    className="w-12 h-12 rounded-full object-cover" />
                 ) :(
                     <User className="h-6 w-6 text-emerald-400"/>
                 )}

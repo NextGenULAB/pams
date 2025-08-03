@@ -71,7 +71,6 @@ const PendingDoctors = ({ doctors }) => {
           <CardDescription>
             Review and approve doctor verifications.
           </CardDescription>
-          <CardAction>Take Action</CardAction>
         </CardHeader>
         <CardContent>
           {doctors.length === 0 ? (

@@ -1,7 +1,9 @@
 import { db } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/dist/types/server";
 import { VerificationStatus } from "@prisma/client";
 import { addDays, addMinutes, endOfDay, format, isBefore } from "date-fns";
-import { date, lte } from "zod";
+import { P } from "framer-motion/dist/types.d-Bq-Qm38R";
+import { date, gt, gte, lte } from "zod";
 
 export async function getDoctorById(doctorId) { 
     try {
@@ -142,6 +144,102 @@ export async function getAvailableTimeSlots(doctorId) {
         return { days: result };
     } catch (error) {
         throw new Error("Failed to fetch doctor details");
+
+    }
+
+    
+}
+
+export async function bookAppointment(formData) {
+    const { userId } = await auth();
+
+    if (!userId) {
+        throw new Error("Unauthorized");
+    }
+
+    try {
+        //get the patient user
+        const patient = await db.user.findUnique({
+            where: {
+                clerkUserId: userId,
+                role: "PATIENT", 
+            },
+        });
+
+        if (!patient) {
+            throw new Error("Patient not found");
+        }
+
+        //Parse form data
+        const doctorId = formData.get("doctorId");
+        const startTime = new Date(formData.get("startTime"));
+        const endTime = new Date(formData.get("endTime"));
+        const patientDescription = formData.get("description") || null;
+
+        if (!doctorId || !startTime || !endTime) {
+            throw new Error("Doctor, start time, and end time are required");
+        }
+
+         const doctor = await db.user.findUnique({
+            where: {
+                id: doctorId,
+                role: "DOCTOR",
+                VerificationStatus: "VERIFIED",
+            },
+        });
+
+        if (!doctor) {
+            throw new Error("Doctor not found or not verified");
+        }
+
+        if (patient.credits < 2) {
+            throw new Error("Insufficient credits to book an appointment");
+        }
+
+        const overLappingAppointment = await db.appointment.findUnique({
+            where: {
+                doctorId: doctorId,
+                status: "SCHEDULED",
+                OR: [  {
+                    startTime: {
+                        lte: startTime,
+                    },
+                    endTime: {
+                        gt: startTime,
+                    },
+                    },
+
+                     {
+                    startTime: {
+                        lt: endTime,
+                    },
+                    endTime: {
+                        gte: endTime,
+                    },
+                    },
+
+
+
+
+
+                ],
+
+            },
+        });
+
+        if (overLappingAppointment) {
+            throw new Error("This time slot is already booked");
+        
+        }
+
+        const sessionId = await createVideoSession() 
+        
+
+        }
+
+
+
+    catch (error) {
 
     }
 

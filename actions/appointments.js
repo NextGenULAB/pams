@@ -1,11 +1,10 @@
 import { db } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/dist/types/server";
-import { VerificationStatus } from "@prisma/client";
+import { auth } from "@clerk/nextjs/server";
 import { addDays, addMinutes, endOfDay, format, isBefore } from "date-fns";
-import { P } from "framer-motion/dist/types.d-Bq-Qm38R";
-import { date, gt, gte, lte } from "zod";
 import { deductCreditsForAppointment } from "@/actions/credits";
 import { revalidatePath } from "next/cache";
+import { Auth } from "@vonage/auth";
+import { Vonage } from "@vonage/server-sdk";
 
 const credentials = new Auth({
   applicationId: process.env.NEXT_PUBLIC_VONAGE_APPLICATION_ID,
@@ -20,7 +19,7 @@ export async function getDoctorById(doctorId) {
       where: {
         id: doctorId,
         role: "DOCTOR",
-        VerificationStatus: "VERIFIED",
+        verificationStatus: "VERIFIED",
       },
     });
 
@@ -40,7 +39,7 @@ export async function getAvailableTimeSlots(doctorId) {
       where: {
         id: doctorId,
         role: "DOCTOR",
-        VerificationStatus: "VERIFIED",
+        verificationStatus: "VERIFIED",
       },
     });
 
@@ -75,7 +74,7 @@ export async function getAvailableTimeSlots(doctorId) {
 
     const availableSlotsByDay = {};
 
-    for (day of days) {
+    for (const day of days) {
       const dayString = format(day, "yyyy-MM-dd");
       availableSlotsByDay[dayString] = [];
 
@@ -185,7 +184,7 @@ export async function bookAppointment(formData) {
       where: {
         id: doctorId,
         role: "DOCTOR",
-        VerificationStatus: "VERIFIED",
+        verificationStatus: "VERIFIED",
       },
     });
 

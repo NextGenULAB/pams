@@ -15,7 +15,7 @@ const vonage = new Vonage(credentials, {});
 
 export async function getDoctorById(doctorId) {
   try {
-    const doctor = await db.user.findUnique({
+    const doctor = await db.user.findFirst({
       where: {
         id: doctorId,
         role: "DOCTOR",
@@ -35,7 +35,7 @@ export async function getDoctorById(doctorId) {
 
 export async function getAvailableTimeSlots(doctorId) {
   try {
-    const doctor = await db.user.findUnique({
+    const doctor = await db.user.findFirst({
       where: {
         id: doctorId,
         role: "DOCTOR",
@@ -54,9 +54,12 @@ export async function getAvailableTimeSlots(doctorId) {
       },
     });
 
+    // if (!availability) {
+    //   throw new Error("No availability set by doctor");
+    // }
     if (!availability) {
-      throw new Error("No availability set by doctor");
-    }
+  return { days: [] }; // Return empty days instead of throwing
+}
 
     const now = new Date();
     const days = [now, addDays(now, 1), addDays(now, 2), addDays(now, 3)];
@@ -146,6 +149,7 @@ export async function getAvailableTimeSlots(doctorId) {
 
     return { days: result };
   } catch (error) {
+     console.error("Actual error fetching doctor details:", error);
     throw new Error("Failed to fetch doctor details");
   }
 }
@@ -180,7 +184,7 @@ export async function bookAppointment(formData) {
       throw new Error("Doctor, start time, and end time are required");
     }
 
-    const doctor = await db.user.findUnique({
+    const doctor = await db.user.findFirst({
       where: {
         id: doctorId,
         role: "DOCTOR",
@@ -238,7 +242,7 @@ export async function bookAppointment(formData) {
         throw new Error(error || "Failed to deduct credits");
       }
 
-      const appointment = await tx.appointment.create({
+      const appointment = await db.appointment.create({
         data: {
           doctorId: doctor.id,
           patientId: patient.id,

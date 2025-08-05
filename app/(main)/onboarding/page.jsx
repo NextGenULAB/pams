@@ -165,6 +165,7 @@ const OnboardingPage = () => {
                     return (<SelectItem
                          key={spec.name}
                         value={spec.name}
+                          label={spec.name}
                     ><div className="flex items-center gap-2">
                      <span className="text-emerald-400"> {spec.icon} </span>
                      {spec.name}  

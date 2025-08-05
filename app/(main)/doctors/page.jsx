@@ -25,7 +25,6 @@ const SpecialitiesPage = () => {
                         </div>
                     </div>
                     <h3 className="font-medium text-white">{specialty.name}
-                        {specialty.name}
                     </h3>
                 </CardContent>
             </Card>

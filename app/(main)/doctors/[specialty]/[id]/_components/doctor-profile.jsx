@@ -177,7 +177,7 @@ const DoctorProfile = ({ doctor, availableDays }) => {
                     {!selectedSlot && (
                       <SlotPicker
                         days={availableDays}
-                        onSelectedSlot={handleSlotSelect}
+                        onSelectSlot={handleSlotSelect}
                       />
                     )}
 

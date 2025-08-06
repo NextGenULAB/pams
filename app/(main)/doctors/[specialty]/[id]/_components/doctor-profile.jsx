@@ -1,23 +1,62 @@
+"use client";
+
 //import { CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { Medal, User } from "lucide-react";
-import React from "react";
+import {
+  Medal,
+  User,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Clock,
+  AlertCircle,
+  Calendar,
+} from "lucide-react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import SlotPicker from "./slot-picker";
+import AppointmentForm from "./appointment-form";
+import { useRouter } from "next/navigation";
 
 const DoctorProfile = ({ doctor, availableDays }) => {
+  const [showBooking, setShowBooking] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const router = useRouter();
+
+  const handleSlotSelect = (slot) => {
+    setSelectedSlot(slot);
+  };
+
   const totalSlots = availableDays.reduce(
     (total, day) => total + day.slots.length,
     0
   );
+
+  const toggleBooking = () => {
+    setShowBooking(!showBooking);
+    if (!showBooking) {
+      setTimeout(() => {
+        document.getElementById("booking-section")?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }, 100);
+    }
+  };
+
+
+  const handleBookingComplete=()=>{
+    router.push("/appointments");
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -54,21 +93,119 @@ const DoctorProfile = ({ doctor, availableDays }) => {
                   {doctor.experience} years of experience
                 </span>
               </div>
+              <Button
+                onClick={toggleBooking}
+                className="w-ful bg-emerald-600 hover:bg-emerald-700 mt-4"
+              >
+                {showBooking ? (
+                  <>
+                    Hide Booking
+                    <ChevronUp className=" ml-2h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    Book Appointment
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="md:cols-span-2 space-y-6">
-        <Card>
+      <div className="md:col-span-2 space-y-6">
+        <Card className="border-emerald-900/20">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-white">
               About Dr. {doctor.name}
             </CardTitle>
             <CardDescription>{doctor.specialty}</CardDescription>
           </CardHeader>
-          <CardContent>{totalSlots > 0 ? <></> : <div></div>}</CardContent>
+          <CardContent className="space-y-6">
+            <div className="space-y-6">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-emerald-400" />
+                <h3 className="text-white font-medium">Description</h3>
+              </div>
+              <p className="text-muted-foreground whhitespace-pre-line">
+                {doctor.description}
+              </p>
+            </div>
+
+            <Separator className="bg-emerald-900/20" />
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-emerald-400" />
+                <h3 className="text-white font-medium"> Availability</h3>
+              </div>
+            </div>
+            {totalSlots > 0 ? (
+              <div className="flex items-center">
+                <Calendar className="h-5 w-5 text-emerald-400 mr-2" />
+                <p className="text-muted-foreground">
+                  {totalSlots} time slots available for booking over the next 4
+                  days
+                </p>
+              </div>
+            ) : (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  No available slots for the next 4 days. Please check back
+                  later.
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
         </Card>
+
+        {showBooking && (
+          <div id="booking-section">
+            <Card className="border-emerald-900/20">
+              <CardHeader>
+                <CardTitle className="text-xl font-bold text-white ">
+                  Book an Appointment
+                </CardTitle>
+                <CardDescription>Card Description</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {totalSlots > 0 ? (
+                  <>
+                    {!selectedSlot && (
+                      <SlotPicker
+                        days={availableDays}
+                        onSelectedSlot={handleSlotSelect}
+                      />
+                    )}
+
+                    {selectedSlot && (
+                      <AppointmentForm
+                        doctorID={doctor.id}
+                        slot={selectedSlot}
+                        onBack={() => setSelectedSlot(null)}
+                        onComplete={handleBookingComplete}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-6">
+                    <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                    <h3 className="text-xl font-medium text-white mb-2">
+                      No available slots
+                    </h3>
+                    <p className="text-muted-foreground">
+                      This doctor doesn&apos;t have any available appointment
+                      slots for the next 4 days. Please check back later or try
+                      another doctor.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

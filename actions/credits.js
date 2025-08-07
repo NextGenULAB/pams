@@ -111,7 +111,7 @@ export async function deductCreditsForAppointment(userID, doctorId){
 
         });
 
-        const doctor  = await db.doctor.findUnique({
+        const doctor  = await db.user.findUnique({
             where: {id:doctorId},
         });
 

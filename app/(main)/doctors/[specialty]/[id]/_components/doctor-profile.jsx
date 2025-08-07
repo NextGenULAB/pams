@@ -183,7 +183,7 @@ const DoctorProfile = ({ doctor, availableDays }) => {
 
                     {selectedSlot && (
                       <AppointmentForm
-                        doctorID={doctor.id}
+                        doctorId={doctor.id}
                         slot={selectedSlot}
                         onBack={() => setSelectedSlot(null)}
                         onComplete={handleBookingComplete}

@@ -1,3 +1,5 @@
+"use server";
+
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { addDays, addMinutes, endOfDay, format, isBefore } from "date-fns";
@@ -184,7 +186,7 @@ export async function bookAppointment(formData) {
       throw new Error("Doctor, start time, and end time are required");
     }
 
-    const doctor = await db.user.findFirst({
+    const doctor = await db.user.findUnique({
       where: {
         id: doctorId,
         role: "DOCTOR",
@@ -200,7 +202,7 @@ export async function bookAppointment(formData) {
       throw new Error("Insufficient credits to book an appointment");
     }
 
-    const overlappingAppointment = await db.appointment.findUnique({
+    const overlappingAppointment = await db.appointment.findFirst({
       where: {
         doctorId: doctorId,
         status: "SCHEDULED",
@@ -232,7 +234,7 @@ export async function bookAppointment(formData) {
 
     const sessionId = await createVideoSession();
 
-    //const result = await db.$transaction(async (tx) => {
+    
       const { success, error } = await deductCreditsForAppointment(
         doctor.id,
         patient.id
@@ -250,13 +252,13 @@ export async function bookAppointment(formData) {
           endTime,
           patientDescription,
           status: "SCHEDULED",
-          videoSessionID: sessionId,
+          videoSessionId: sessionId,
         },
       });
      // return appointment;
     //});
     revalidatePath("/appointments");
-    return { success: true, appointment: result.appointment };
+    return { success: true, appointment: appointment };
   } catch (error) {
     throw new Error("Failed to book appointment:" + error.message);
   }

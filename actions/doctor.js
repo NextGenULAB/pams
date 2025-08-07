@@ -3,6 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { success } from "zod";
 
 export async function setAvailabilitySlots(formData) 
 {
@@ -144,3 +145,114 @@ export async function getDoctorAppointments() {
           throw new Error("Failed to fetch appointments" + error.message);
         }
 }
+
+export async function cancelAppointment(formData) {
+   const { userId } = await auth();
+
+    if (!userId) {
+        throw new Error("Unauthorized");
+    }  
+
+        try {
+           const user = await db.user.findUnique({
+                where: {
+                    clerkUserId: userId,
+                   
+                },
+            });
+
+             if (!user) {  
+                throw new Error("User not found");
+            }
+
+            const appointmentId = formData.get("appointmentId");
+
+            if (!appointmentId) {
+              throw new Error("Appointment ID is required");
+            }
+
+            const appointment = await db.appointment.findUnique({
+              where: {
+                id: appointmentId,
+              },
+              include: {
+                patient: true,
+                doctor: true,
+              },
+            }); 
+
+            if (!appointment) {
+              throw new Error("Appointment not found");
+            }
+
+            if (appointment.doctorId !== userId && appointment.patientId !== user.id) {
+              throw new Error("You are not authorized to cancel this appointment");
+            }
+
+            await db.$transaction(async tx=>{
+              await tx.appointment.update({
+                where: {
+                  id: appointmentId,
+                },
+                data: {
+                  status: "CANCELLED",
+                },
+              });
+
+              await tx.creditTransaction.create({
+                data: {
+                  userId: appointment.patientId,
+                  amount: 2,
+                  type: "APPOINTMENT_DEDUCTION",
+                 
+                },
+              });
+               await tx.creditTransaction.create({
+                data: {
+                  userId: appointment.doctorId,
+                  amount: -2,
+                  type: "APPOINTMENT_DEDUCTION",
+                 
+                },
+              });
+              //increment patients credit balance
+              await tx.user.update({
+                where: {
+                  id: appointment.patientId,
+                },
+                data: {
+                  credits: {
+                    increment: 2,
+                  },
+                },
+              });
+              //decrementing doctor's credit balance
+               await tx.user.update({
+                where: {
+                  id: appointment.doctorId,
+                },
+                data: {
+                  credits: {
+                    decrement: 2,
+                  },
+                },
+              });
+            });
+            if (user.role === "DOCTOR") {
+                revalidatePath("/doctor");
+              } else if (user.role === "PATIENT") {
+                revalidatePath("/appointments");
+              }
+
+            
+              return {success:true}
+
+
+        }catch (error) {
+          
+          throw new Error("Failed to cancel appointment: " + error.message);
+
+        }
+
+}
+

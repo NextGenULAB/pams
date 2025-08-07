@@ -274,3 +274,6 @@ async function createVideoSession() {
        throw new Error("Failed to create video session" + error.message);
     }
 }
+
+export async function generateVideoToken(formData) {}
+

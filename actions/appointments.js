@@ -236,8 +236,9 @@ export async function bookAppointment(formData) {
 
     
       const { success, error } = await deductCreditsForAppointment(
-        doctor.id,
-        patient.id
+        patient.id,
+        doctor.id
+        
       );
 
       if (!success) {
@@ -246,8 +247,8 @@ export async function bookAppointment(formData) {
 
       const appointment = await db.appointment.create({
         data: {
-          doctorId: doctor.id,
           patientId: patient.id,
+          doctorId: doctor.id,
           startTime,
           endTime,
           patientDescription,

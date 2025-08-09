@@ -101,13 +101,14 @@ export async function checkAndAllocateCredits(user) {
         "Failed to check subscription and allocate credits:",
         error.message
     );
+    return null;
     }
 }
 
-export async function deductCreditsForAppointment(userID, doctorId){
+export async function deductCreditsForAppointment(userId, doctorId){
     try{
         const user = await db.user.findUnique({
-            where: {id: userID},
+            where: {id: userId},
 
         });
 
@@ -126,8 +127,8 @@ export async function deductCreditsForAppointment(userID, doctorId){
 
             await tx.creditTransaction.create({
                 data: {
-                    userId: user.id,
-                    amount: -APPOINTMENT_CREDIT_COST,
+                    userId: doctor.id,
+                    amount: APPOINTMENT_CREDIT_COST,
                     type: "APPOINTMENT_DEDUCTION",
                     //description : `Credits deducted for appointment with Dr. ${doctor.name}`,
                 },
@@ -163,7 +164,7 @@ export async function deductCreditsForAppointment(userID, doctorId){
                 },
             });
 
-            return updatedUser
+            return updatedUser;
 
         });
 

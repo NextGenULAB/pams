@@ -185,11 +185,11 @@ export async function cancelAppointment(formData) {
               throw new Error("Appointment not found");
             }
 
-            if (appointment.doctorId !== userId && appointment.patientId !== user.id) {
+            if (appointment.doctorId !== user.id && appointment.patientId !== user.id) {
               throw new Error("You are not authorized to cancel this appointment");
             }
 
-            await db.$transaction(async tx=>{
+            await db.$transaction(async (tx)=>{
               await tx.appointment.update({
                 where: {
                   id: appointmentId,

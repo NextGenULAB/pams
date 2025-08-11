@@ -3,7 +3,7 @@
 import { generateVideoToken } from "@/actions/appointments";
 import { addAppointmentNotes, cancelAppointment, markAppointmentCompleted } from "@/actions/doctor";
 import useFetch from "@/hooks/use-fetch";
-import { Calendar, Calendar1Icon, CheckCircle, Clock, Loader2, Stethoscope, User } from "lucide-react";
+import { Calendar, Calendar1Icon, CheckCircle, Clock, Loader2, Stethoscope, User, Video } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { format } from "date-fns";
@@ -11,11 +11,13 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { useRouter } from "next/navigation";
 
 const AppointmentCard = ({ appointment, userRole }) => {
  const [open, setOpen] = useState(false);
   const [action, setAction] = useState(null); // 'cancel', 'notes', 'video', or 'complete'
   const [notes, setNotes] = useState(appointment.notes || "");
+const router = useRouter()
 
   const {
   loading: cancelLoading,
@@ -91,6 +93,36 @@ useEffect(() => {
   }
 }, [completeData]);
 
+const isAppointmentActive = () => {
+  const now = new Date();
+  const appointmentTime = new Date(appointment.startTime);
+  const appointmentEndTime = new Date(appointment.endTime);
+
+  // Can join 30 minutes before start until end time
+  return (
+    (appointmentTime.getTime() - now.getTime() <= 30 * 60 * 1000 &&
+      now < appointmentTime) ||
+    (now > appointmentTime && now < appointmentEndTime)
+  );
+};
+
+const handleJoinVideoCall = async () => {
+  if (tokenLoading) return;
+
+  setAction("video");
+
+  const formData = new FormData();
+  formData.append("appointmentId", appointment.id);
+  await submitTokenRequest(formData);
+};
+
+useEffect(() =>  {
+if (tokenData?.success) {
+  router.push(
+    `/video-call?sessionId=${tokenData.videoSessionId}&token=${tokenData.token}&appointmentId=${appointment.id}`
+  );
+}
+}, [tokenData, appointment.id]);
 
  return (
     <>
@@ -279,6 +311,35 @@ useEffect(() => {
                     </div>
                 </div>
                 )}
+
+              {appointment.status === "SCHEDULED" && (
+                <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-muted-foreground">
+                    Video Consultation
+                    </h4>
+                    <Button
+                    className="w-full bg-emerald-600 hover:bg-emerald-700"
+                    disabled={
+                        !isAppointmentActive() || action === "video" || tokenLoading
+                    }
+                    onClick={handleJoinVideoCall}
+                    >
+                    {tokenLoading || action === "video" ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Preparing Video Call...
+                        </>
+                        ) : (
+                        <>
+                            <Video className="h-4 w-4 mr-2" />
+                            {isAppointmentActive()
+                            ? "Join Video Call"
+                            : "Video call will be available 30 minutes before appointment"}
+                        </>
+                        )}
+                    </Button>
+                </div>
+                )}  
 
                 </div>
             </DialogContent>

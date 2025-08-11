@@ -3,13 +3,14 @@
 import { generateVideoToken } from "@/actions/appointments";
 import { addAppointmentNotes, cancelAppointment, markAppointmentCompleted } from "@/actions/doctor";
 import useFetch from "@/hooks/use-fetch";
-import { Calendar1Icon, CheckCircle, Clock, Loader2, Stethoscope, User } from "lucide-react";
+import { Calendar, Calendar1Icon, CheckCircle, Clock, Loader2, Stethoscope, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { format } from "date-fns";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
 const AppointmentCard = ({ appointment, userRole }) => {
  const [open, setOpen] = useState(false);
@@ -90,7 +91,9 @@ useEffect(() => {
   }
 }, [completeData]);
 
+
  return (
+    <>
             <Card className="border-emerald-900/20 hover:border-emerald-700/30 transition-all">
             <CardContent className="p-4">
                 <div className="flex flex-col md:flex-row justify-between gap-4">
@@ -144,7 +147,8 @@ useEffect(() => {
                     >
                     {appointment.status}
                     </Badge>
-                    <div className="flex gap-2">{canMarkCompleted () && (
+                    <div className="flex gap-2 mt-2 flex-wrap">
+                        {canMarkCompleted () && (
                         <Button
                         size="sm"
                         onClick={handleMarkCompleted}
@@ -178,7 +182,108 @@ useEffect(() => {
                 </div>
             </CardContent>
             </Card>
+                {/* Appointment details dialog */}
+                <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent>
+                <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-white">
+                    Appointment Details
+                    </DialogTitle>
+                <DialogDescription>
+                    {appointment.status === "SCHEDULED"
+                    ? "Manage your upcoming appointment"
+                    : "View appointment information"}
+                </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                {/* Other Party Information */}
+                    <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-muted-foreground">
+                        {otherPartyLabel}
+                    </h4>
+                    <div className="flex items-center">
+                        <div className="h-5 w-5 text-emerald-400 mr-2">
+                        {otherPartyIcon}
+                        </div>
+                        <p className="text-white font-medium">
+                        {userRole === "DOCTOR"
+                            ? otherParty.name
+                            : `Dr. ${otherParty.name}`}
+                        </p>
+                            {userRole === "DOCTOR" && (
+                            <p className="text-muted-foreground text-sm">
+                                {otherParty.email}
+                            </p>
+                            )}
 
+                            {userRole === "PATIENT" && (
+                            <p className="text-muted-foreground text-sm">
+                                {otherParty.specialty}
+                            </p>
+                            )}
+                    
+                    </div>
+                    </div>
+                   {/* Appointment Time */}
+                    <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-muted-foreground">
+                        Scheduled Time
+                    </h4>
+                    <div className="flex flex-col gap-1">
+                        <div className="flex items-center">
+                        <Calendar className="h-5 w-5 text-emerald-400 mr-2" />
+                        <p className="text-white">
+                            {formatDateTime(appointment.startTime)}
+                        </p>
+                        </div>
+                        <div className="flex items-center">
+                        <Clock className="h-5 w-5 text-emerald-400 mr-2" />
+                        <p className="text-white">
+                            {formatTime(appointment.startTime)}{" - "}
+                            {formatTime(appointment.endTime)}
+                        </p>
+                    </div>
+                    </div>
+                    </div> 
+                    <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-muted-foreground">
+                        Status
+                    </h4>
+                    <Badge
+                        variant="outline"
+                        className={
+                        appointment.status === "COMPLETED"
+                            ? "bg-emerald-900/20 border-emerald-900/30 text-emerald-400"
+                            : appointment.status === "CANCELLED"
+                            ? "bg-red-900/20 border-red-900/30 text-red-400"
+                            : "bg-amber-900/20 border-amber-900/30 text-amber-400"
+                        }                  
+                    >
+                        {appointment.status}
+                    </Badge>
+                       </div>
+                    
+
+                    {/* Patient Description */}
+                {appointment.patientDescription && (
+                <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-muted-foreground">
+                    {userRole === "DOCTOR"
+                        ? "Patient Description"
+                        : "Your Description"}
+                    </h4>
+                    <div className="p-3 rounded-md bg-muted/20 border border-emerald-900/20">
+                    <p className="text-white whitespace-pre-line">
+                        {appointment.patientDescription}
+                    </p>
+                    </div>
+                </div>
+                )}
+
+                </div>
+            </DialogContent>
+            </Dialog>
+            </> 
 
  );
 };

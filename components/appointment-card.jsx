@@ -3,12 +3,13 @@
 import { generateVideoToken } from "@/actions/appointments";
 import { addAppointmentNotes, cancelAppointment, markAppointmentCompleted } from "@/actions/doctor";
 import useFetch from "@/hooks/use-fetch";
-import { Calendar1Icon, Clock, Stethoscope, User } from "lucide-react";
-import React, { useState } from "react";
+import { Calendar1Icon, CheckCircle, Clock, Loader2, Stethoscope, User } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { format } from "date-fns";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 const AppointmentCard = ({ appointment, userRole }) => {
  const [open, setOpen] = useState(false);
@@ -68,6 +69,27 @@ const otherPartyIcon = userRole === "DOCTOR" ? <User /> : <Stethoscope />;
         return now >= appointmentEndTime;
 };
 
+const handleMarkCompleted = async () => {
+  if (completeLoading) return;
+
+  if (
+    window.confirm(
+      "Are you sure you want to mark this appointment as completed? This action cannot be undone."
+    )
+  ) {
+    const formData = new FormData();
+    formData.append("appointmentId", appointment.id);
+    await submitMarkCompleted(formData);
+  }
+};
+
+useEffect(() => {
+  if (completeData?.success) {
+    toast.success("Appointment marked as completed");
+    setOpen(false);
+  }
+}, [completeData]);
+
  return (
             <Card className="border-emerald-900/20 hover:border-emerald-700/30 transition-all">
             <CardContent className="p-4">
@@ -122,11 +144,36 @@ const otherPartyIcon = userRole === "DOCTOR" ? <User /> : <Stethoscope />;
                     >
                     {appointment.status}
                     </Badge>
-                    <div>{canMarkCompleted () && (
+                    <div className="flex gap-2">{canMarkCompleted () && (
                         <Button
                         size="sm"
-                        className="bg-emerald-600 hover:bg-emerald-700"
-                    >Complete</Button>)}</div>
+                        onClick={handleMarkCompleted}
+                        disabled={completeLoading}
+                        className="bg-emerald-600 hover:bg-emerald-800"
+                    >
+                    
+                        {completeLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                        <>
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Complete
+                        </>
+                        )}
+
+                    </Button>
+                )}
+
+                <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-emerald-900/30"
+                    onClick={() => setOpen(true)}
+                    >
+                    View Details
+                    </Button>    
+                    
+                    </div>
                 </div>
                 </div>
             </CardContent>

@@ -48,7 +48,7 @@ export async function getPatientAppointments() {
         return { appointments };
  
     } catch (error) {
-        return { error: "Failed to fetch appointments "};
+        return { error: "Failed to fetch appointments " + error.message};
 
     }
 }

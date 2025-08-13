@@ -3,16 +3,17 @@
 import { generateVideoToken } from "@/actions/appointments";
 import { addAppointmentNotes, cancelAppointment, markAppointmentCompleted } from "@/actions/doctor";
 import useFetch from "@/hooks/use-fetch";
-import { Calendar, Calendar1Icon, CheckCircle, Clock, Edit, Loader2, Stethoscope, User, Video } from "lucide-react";
+import { Calendar, Calendar1Icon, CheckCircle, Clock, Edit, Loader2, Stethoscope, User, Video, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { format } from "date-fns";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
+
 
 
 
@@ -143,6 +144,27 @@ useEffect(() =>
         setAction(null);
     }
 }, [notesData]);
+
+const handleCancelAppointment = async () => {
+  if (cancelLoading) return;
+
+  if (
+    window.confirm(
+      "Are you sure you want to cancel this appointment? This action cannot be undone."
+    )
+  ) {
+    const formData = new FormData();
+    formData.append("appointmentId", appointment.id);
+    await submitCancel(formData);
+  }
+};
+
+useEffect(() => {
+  if (cancelData?.success) {
+    toast.success("Appointment cancelled successfully");
+    setOpen(false);
+  }
+}, [cancelData]);
 
  return (
     <>
@@ -432,6 +454,31 @@ useEffect(() =>
 
 
                 </div>
+
+                <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
+                     {/* Cancel Button - For scheduled appointments */}
+                     {appointment.status === "SCHEDULED" && (
+                        <Button 
+                        variant="outline"
+                        onClick={handleCancelAppointment}
+                        disabled={cancelLoading}
+                        className="border-red-900/30 text-red-400 hover:bg-red-900/10 mt-3 sm:mt-0"
+                        >
+                            {cancelLoading ? (
+                                <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Cancelling...
+                                </>
+                            
+                            ) : (
+                                <>
+                                <X className="h-4 w-4 mr-1"/>
+                                Cancel Appointment
+                                </>
+                            )}
+                        </Button>
+                     )}
+                </DialogFooter>
             </DialogContent>
             </Dialog>
             </> 

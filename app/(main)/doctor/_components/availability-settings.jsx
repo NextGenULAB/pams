@@ -43,18 +43,18 @@ const AvailabilitySettings = ({ slots }) => {
     const formData = new FormData();
 
     const startDate = createLocalDateFromTime(data.startTime);
-    const endDate = createLocalDateFromTime(data.endTime);
+    let endDate = createLocalDateFromTime(data.endTime);
 
-    if (startDate >= endDate) {
-      toast.error("End time must be after start time");
-      return;
-  }
+    // If end time is the same or earlier than start time, treat it as next-day (overnight)
+    if (endDate <= startDate) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
 
-  formData.append("startTime", startDate.toISOString());
-  formData.append("endTime", endDate.toISOString());
+    formData.append("startTime", startDate.toISOString());
+    formData.append("endTime", endDate.toISOString());
 
-  await submitSlots(formData);
-};
+    await submitSlots(formData);
+  };
 
 useEffect(() => {
     if (data && data?.success) {

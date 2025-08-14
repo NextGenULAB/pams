@@ -24,14 +24,23 @@ export async function setAvailabilitySlots(formData)
                 throw new Error("Doctor not found");
             }
 
-            const startTime = formData.get("startTime");
-            const endTime = formData.get("endTime");
+            const startTimeStr = formData.get("startTime");
+            const endTimeStr = formData.get("endTime");
 
-            if (!startTime || !endTime) {
+            if (!startTimeStr || !endTimeStr) {
                 throw new Error("Start time and end time are required");
             }
-            if (startTime >= endTime) {
-                throw new Error("Start time must be before end time");
+
+            const startTime = new Date(startTimeStr);
+            let endTime = new Date(endTimeStr);
+
+            if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+                throw new Error("Invalid time values");
+            }
+
+            // If end is not after start, assume it crosses midnight to the next day
+            if (endTime <= startTime) {
+                endTime.setDate(endTime.getDate() + 1);
             }
 
             const existingSlot = await db.availability.findMany({
@@ -59,8 +68,8 @@ export async function setAvailabilitySlots(formData)
           const newSlot = await db.availability.create({
                 data: {
                     doctorId: doctor.id,
-                    startTime: new Date(startTime),
-                    endTime: new Date(endTime),
+                    startTime,
+                    endTime,
                     status: "AVAILABLE",
                 },
             });

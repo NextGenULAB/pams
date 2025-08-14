@@ -79,28 +79,24 @@ export async function getAvailableTimeSlots(doctorId) {
 
     const availableSlotsByDay = {};
 
-    for (const day of days) {
-      const dayString = format(day, "yyyy-MM-dd");
-      availableSlotsByDay[dayString] = [];
+    // Base availability clock times and whether it spans midnight
+    const baseStart = new Date(availability.startTime);
+    const baseEnd = new Date(availability.endTime);
+    const startH = baseStart.getHours();
+    const startM = baseStart.getMinutes();
+    const endH = baseEnd.getHours();
+    const endM = baseEnd.getMinutes();
+    const spansMidnight = endH < startH || (endH === startH && endM <= startM);
 
-      //creating a copy of the availability start and end times for this day
-      const availabilityStart = new Date(availability.startTime);
-      const availabilityEnd = new Date(availability.endTime);
+    const withTime = (dayLike, h, m) => {
+      const d = new Date(dayLike);
+      d.setHours(h, m, 0, 0);
+      return d;
+    };
 
-      //setting the day to the current day we are processing
-      availabilityStart.setFullYear(
-        day.getFullYear(),
-        day.getMonth(),
-        day.getDate()
-      );
-      availabilityEnd.setFullYear(
-        day.getFullYear(),
-        day.getMonth(),
-        day.getDate()
-      );
-
-      let current = new Date(availabilityStart);
-      const end = new Date(availabilityEnd);
+    const pushSlotsInRange = (rangeStart, rangeEnd) => {
+      let current = new Date(rangeStart);
+      const end = new Date(rangeEnd);
 
       while (
         isBefore(addMinutes(current, 30), end) ||
@@ -125,7 +121,9 @@ export async function getAvailableTimeSlots(doctorId) {
         });
 
         if (!overlaps) {
-          availableSlotsByDay[dayString].push({
+          const dayKey = format(current, "yyyy-MM-dd");
+          if (!availableSlotsByDay[dayKey]) availableSlotsByDay[dayKey] = [];
+          availableSlotsByDay[dayKey].push({
             startTime: current.toISOString(),
             endTime: next.toISOString(),
             formatted: `${format(current, "h:mm a")} - ${format(
@@ -136,6 +134,27 @@ export async function getAvailableTimeSlots(doctorId) {
           });
         }
         current = next;
+      }
+    };
+
+    for (const day of days) {
+      const dayString = format(day, "yyyy-MM-dd");
+      availableSlotsByDay[dayString] = [];
+
+      if (!spansMidnight) {
+        const availabilityStart = withTime(day, startH, startM);
+        const availabilityEnd = withTime(day, endH, endM);
+        pushSlotsInRange(availabilityStart, availabilityEnd);
+      } else {
+        // Evening segment (today from start time until midnight)
+        const eveningStart = withTime(day, startH, startM);
+        const eveningEnd = endOfDay(day);
+        pushSlotsInRange(eveningStart, eveningEnd);
+
+        // Morning segment (today from midnight until end time)
+        const morningStart = withTime(day, 0, 0);
+        const morningEnd = withTime(day, endH, endM);
+        pushSlotsInRange(morningStart, morningEnd);
       }
     }
 

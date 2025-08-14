@@ -3,19 +3,15 @@
 import { generateVideoToken } from "@/actions/appointments";
 import { addAppointmentNotes, cancelAppointment, markAppointmentCompleted } from "@/actions/doctor";
 import useFetch from "@/hooks/use-fetch";
-import { Calendar, Calendar1Icon, CheckCircle, Clock, Edit, Loader2, Stethoscope, User, Video, X } from "lucide-react";
+import { Calendar, Calendar1Icon, CheckCircle, Clock, Loader2, Stethoscope, User, Video } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { format } from "date-fns";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { useRouter } from "next/navigation";
-import { Textarea } from "@/components/ui/textarea";
-
-
-
 
 const AppointmentCard = ({ appointment, userRole }) => {
  const [open, setOpen] = useState(false);
@@ -127,44 +123,6 @@ if (tokenData?.success) {
   );
 }
 }, [tokenData, appointment.id]);
-
-const handleSaveNotes= async()=>{
-    if (notesLoading || userRole !== "DOCTOR") return;
-
-    const formData = new FormData();
-    formData.append("appointmentId", appointment.id);
-    formData.append("notes", notes);
-    await submitNotes(formData);
-};
-
-useEffect(() =>
-{
-    if (notesData?.success) {
-        toast.success("Notes saved successfully");
-        setAction(null);
-    }
-}, [notesData]);
-
-const handleCancelAppointment = async () => {
-  if (cancelLoading) return;
-
-  if (
-    window.confirm(
-      "Are you sure you want to cancel this appointment? This action cannot be undone."
-    )
-  ) {
-    const formData = new FormData();
-    formData.append("appointmentId", appointment.id);
-    await submitCancel(formData);
-  }
-};
-
-useEffect(() => {
-  if (cancelData?.success) {
-    toast.success("Appointment cancelled successfully");
-    setOpen(false);
-  }
-}, [cancelData]);
 
  return (
     <>
@@ -383,102 +341,7 @@ useEffect(() => {
                 </div>
                 )}  
 
-                <div className="space-y-2">
-                        
-                    <div className="flex items-center justify-between"><h4 className="text-sm font-medium text-muted-foreground">
-                        Doctor Notes 
-                        </h4>
-                        {userRole==='DOCTOR' && action!== 'notes' && appointment.status!== 'CANCELLED' && (
-                        <Button 
-                            variant= "ghost"
-                            size= "sm"
-                            onClick={() => setAction("notes")}
-                            className="h-7 text-emerald-400 hover:text-emerald-300 hover: bg-emerald-900/20">
-                                <Edit className="h-3.5 w-3.5 mr-1" />
-                                {appointment.notes ? "Edit" : "Add" }
-                            
-                            </Button> )}
-                            </div>
-
-                            {userRole === "DOCTOR" && action ==="notes" ? ( <div className="space-y-3">
-                               <Textarea value={notes}
-                               onChange={(e) => setNotes(e.target.value)}
-                               placeholder="Enter your clinical notes here..."
-                               className="bg-background border-emerald-900/20 min-h-[100px]" 
-                               />
-                               <div className="flex justify-end space-x-2">
-                                <Button 
-                                type="button"
-                                variant="outline"
-                                onClick={() => {
-                                    setAction(null);
-                                    setNotes(appointment.notes || "");
-                                }}
-                                disabled={notesLoading}
-                                className="border-emerald-900/30">
-                                    Cancel
-                                </Button>
-
-                                <Button
-                                siz="sm"
-                                onClick={handleSaveNotes}
-                                disabled= {notesLoading}
-                                className="bg-emerald-600 hover:bg-emerald-700" >
-                                    {notesLoading ? (
-                                        <>
-                                        <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin"/>
-                                       Saving...
-                                        </>
-                                    ) : ("Save Notes")} 
-                                </Button>
-                               </div>
-                
-
-                              
-
-                            </div> ): (
-                                <div className="p-3 rounded-md bg-muted/20 border border-emerald-900/20 min-h-[80px]">
-                                    {appointment.notes ? (
-                                        <p className="text-white whitespace-pre-line">
-                                            {appointment.notes}
-                                        </p>
-                                    ) : (
-                                        <p className="text-muted-foreground italic">
-                                            No notes added yet
-                                        </p>
-                                    )} 
-                                     </div>
-                            )}
-                        </div>
-                
-
-
                 </div>
-
-                <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
-                     {/* Cancel Button - For scheduled appointments */}
-                     {appointment.status === "SCHEDULED" && (
-                        <Button 
-                        variant="outline"
-                        onClick={handleCancelAppointment}
-                        disabled={cancelLoading}
-                        className="border-red-900/30 text-red-400 hover:bg-red-900/10 mt-3 sm:mt-0"
-                        >
-                            {cancelLoading ? (
-                                <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Cancelling...
-                                </>
-                            
-                            ) : (
-                                <>
-                                <X className="h-4 w-4 mr-1"/>
-                                Cancel Appointment
-                                </>
-                            )}
-                        </Button>
-                     )}
-                </DialogFooter>
             </DialogContent>
             </Dialog>
             </> 

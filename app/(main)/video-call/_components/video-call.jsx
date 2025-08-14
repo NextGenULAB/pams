@@ -1,10 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Loader2, Mic, MicOff, PhoneOff, Video, VideoOff } from "lucide-react";
 //import { initialize } from "next/dist/server/lib/render-server";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const VideoCall = ({ sessionId, token }) => {
@@ -14,12 +15,12 @@ const VideoCall = ({ sessionId, token }) => {
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
 
-  const sessionRef = useRef(null);
+  const sessionRef = useRef(null);  
   const publisherRef = useRef(null);
 
   const router = useRouter();
 
-  const appId = process.env.NEXT_PUBLIC_VONAGE_APP_ID;
+  const appId = process.env.NEXT_PUBLIC_VONAGE_APPLICATION_ID;
 
   const handleScriptLoad = () => {
     setScriptLoaded(true);
@@ -112,14 +113,14 @@ const VideoCall = ({ sessionId, token }) => {
   };
 const toggleVideo = ( ) => {
   if (publisherRef.current){
-    publisherRef.current.publisherVideo(!isVideoEnable);
+    publisherRef.current.publishVideo(!isVideoEnabled);
     setIsVideoEnabled((prev) => !prev);
   }
 };
 
 const toggleAudio = ( ) => {
   if (publisherRef.current){
-    publisherRef.current.publisherAudio(!isAudioEnable);
+    publisherRef.current.publishAudio(!isAudioEnabled);
     setIsAudioEnabled((prev) => !prev);
   }
 };
@@ -252,7 +253,7 @@ return () => {
                 } `}
                 disabled={!publisherRef.current}
                  >
-                  {isAudiobled ? <Mic /> :<MicOff />}
+                  {isAudioEnabled ? <Mic /> :<MicOff />}
                  </Button>
                
                <Button 

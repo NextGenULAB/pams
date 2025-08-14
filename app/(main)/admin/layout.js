@@ -2,7 +2,7 @@ import { verifyAdmin } from "@/actions/admin"; //adminimport { verifyAdmin } fro
 import { redirect } from "next/navigation";
 import PageHeader from "@/components/page-header";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, ShieldCheck, User } from "lucide-react";
+import { AlertCircle, CreditCard, ShieldCheck, Users } from "lucide-react";
 
 export const metadata = {
   title: "Admin Settings - PAMS",
@@ -36,8 +36,15 @@ const AdminLayout = async ({ children }) => {
             value="doctors"
             className="flex-1 md:flex md:items-center md:justify-start md:px-4 md:py-3 w-full"
           >
-            <User className="h-4 w-4 mr-2 hidden md:inline" />
+            <Users className="h-4 w-4 mr-2 hidden md:inline" />
             <span> Doctors</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="payouts"
+            className="flex-1 md:flex md:items-center md:justify-start md:px-4 md:py-3 w-full"
+          >
+            <CreditCard className="h-4 w-4 mr-2 hidden md:inline" />
+            <span>Payouts</span>
           </TabsTrigger>
         </TabsList>
         <div className="md:col-span-3">{children}</div>

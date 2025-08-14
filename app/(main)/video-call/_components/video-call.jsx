@@ -110,7 +110,47 @@ const VideoCall = ({ sessionId, token }) => {
         setIsLoading(false);
     }
   };
+const toggleVideo = ( ) => {
+  if (publisherRef.current){
+    publisherRef.current.publisherVideo(!isVideoEnable);
+    setIsVideoEnabled((prev) => !prev);
+  }
+};
 
+const toggleAudio = ( ) => {
+  if (publisherRef.current){
+    publisherRef.current.publisherAudio(!isAudioEnable);
+    setIsAudioEnabled((prev) => !prev);
+  }
+};
+
+const endCall = () => {
+  if (publisherRef.current) {
+    publisherRef.current.destroy();
+    publisherRef.current = null;
+  }
+
+
+if (sessionRef.current) {
+    sessionRef.current.disconnect();
+    sessionRef.current = null;
+  }
+
+  router.push("/appointments");
+};
+
+useEffect(() => {
+return () => {
+  if (publisherRef.current) {
+    publisherRef.current.destroy();
+  
+  }
+  if (sessionRef.current) {
+    sessionRef.current.disconnect();
+  }
+
+};
+}, []);
   if (!sessionId || !token || !appId) {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
@@ -154,6 +194,87 @@ const VideoCall = ({ sessionId, token }) => {
               : "Connection Failed"}
           </p>
         </div>
+
+        {isLoading && !scriptLoaded ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader2 className="h-12 w-12 text-emerald-400 animate-spin mb-4" />
+            <p className="text-white text-lg">
+              Loading Video call components...
+            </p>
+            </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="border border-emerald-900/20 rounded-lg overflow-hidden">
+              <div className="bg-emerald-900/10 px-3 py-2 text-emerald-400 text-sm font-medium">
+              You
+              </div>
+
+              <div
+              className="w-full h-[300px] md:h-[400px] bg-muted/30"
+              id="publisher"
+              >
+                {!scriptLoaded && (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="bg-muted/20 rounded-full p-8">
+                    <User className="h-12 w-12 text-emerald-400" />
+                      </div>
+                     </div>
+                    )}
+                  </div>
+                 </div>
+              </div>
+              <div className="flex justify-center space-x-4">
+                <Button 
+                variant="outline"
+                size="lg" 
+                onClick={toggleVideo}
+                className={ ` rounded-full p-4 h-14 w-14 ${
+                  isVideoEnabled
+                  ? "border-emerald-900/30"
+                  : "bg-red-900/20 border-red-900 text-red-400"
+
+                } `}
+                disabled={!publisherRef.current}
+                 >
+                  {isVideoEnabled ? <Video /> :<VideoOff/>}
+                 </Button>
+
+                 <Button 
+                variant="outline"
+                size="lg" 
+                onClick={toggleAudio}
+                className={ ` rounded-full p-4 h-14 w-14 ${
+                  isAudioEnabled
+                  ? "border-emerald-900/30"
+                  : "bg-red-900/20 border-red-900 text-red-400"
+
+                } `}
+                disabled={!publisherRef.current}
+                 >
+                  {isAudiobled ? <Mic /> :<MicOff />}
+                 </Button>
+               
+               <Button 
+               variant="destructive"
+               size="lg"
+               onClick={endCall}
+               className="rounded-full p-4 h-14 w-14 bg-red-600 hover:bg-red-700"
+               >
+                <PhoneOff />
+               </Button>
+          </div>
+          <div className="text-center">
+            <p className="text-muted-foreground text-sm">
+              {isVideoEnabled ? "Camera on" : "Camera off"}
+              {isAudioEnabled ? "Microphone on" : "Microphone off"}
+            </p>
+            <p className="text-muted-foreground text-sm mt-1">
+              When you're finished with your Consultaion,click the red button to end the call
+            </p>
+             </div>
+          </div>
+        )}
       </div>
     </>
   );

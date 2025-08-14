@@ -6,6 +6,8 @@ import React from 'react'
 import { Calendar } from "lucide-react";
 
 import AppointmentCard from '@/components/appointment-card';
+import { redirect } from 'next/navigation';
+
 
 const PatientAppointmentsPage = async() => {
     const user = await getCurrentUser();

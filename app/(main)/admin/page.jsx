@@ -3,6 +3,7 @@ import { getPendingPayouts, getPendingDoctors, getVerifiedDoctors } from "@/acti
 import VerifiedDoctors from "./_components/verified-doctors";
 import PendingDoctors from "./_components/pending-doctors";
 import { PendingPayouts } from "./_components/pending-payouts";
+import RatingsManagement from "./_components/ratings-management";
 
 const AdminPage = async () => {
   const [pendingDoctorsData, verifiedDoctorsData, pendingPayoutsData] = await Promise.all([
@@ -21,6 +22,9 @@ const AdminPage = async () => {
       </TabsContent> 
       <TabsContent value="payouts" className="border-none p-0">
         <PendingPayouts payouts={pendingPayoutsData.payouts || []} />
+      </TabsContent>
+      <TabsContent value="ratings" className="border-none p-0">
+        <RatingsManagement />
       </TabsContent>
     </>
   );

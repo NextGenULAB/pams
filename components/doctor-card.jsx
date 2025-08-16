@@ -3,6 +3,7 @@ import { Card, CardContent } from "./ui/card";
 import { Badge, Calendar, Star, User } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import RatingSummary from "./rating-summary";
 
 const DoctorCard= ({ doctor }) => {
     return (
@@ -35,6 +36,13 @@ const DoctorCard= ({ doctor }) => {
             <p className="text-sm text-muted-foreground mb-1">
               {doctor.specialty} • {doctor.experience} years experience
             </p>
+
+            {/* Rating Display */}
+            <RatingSummary
+              averageRating={doctor.averageRating}
+              totalRatings={doctor.totalRatings}
+              size="sm"
+            />
 
             <div className="mt-4 line-clamp-2 text-sm text-muted-foreground mb-4">
               {doctor.description}

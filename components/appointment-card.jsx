@@ -2,8 +2,9 @@
 
 import { generateVideoToken } from "@/actions/appointments";
 import { addAppointmentNotes, cancelAppointment, markAppointmentCompleted } from "@/actions/doctor";
+import { checkExistingRating } from "@/actions/ratings";
 import useFetch from "@/hooks/use-fetch";
-import { Calendar, Calendar1Icon, CheckCircle, Clock, Loader2, Stethoscope, User, Video } from "lucide-react";
+import { Calendar, Calendar1Icon, CheckCircle, Clock, Loader2, Stethoscope, User, Video, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { format } from "date-fns";
@@ -12,11 +13,14 @@ import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { useRouter } from "next/navigation";
+import RatingForm from "./rating-form";
 
 const AppointmentCard = ({ appointment, userRole }) => {
  const [open, setOpen] = useState(false);
-  const [action, setAction] = useState(null); // 'cancel', 'notes', 'video', or 'complete'
+  const [action, setAction] = useState(null); // 'cancel', 'notes', 'video', 'complete', or 'rating'
   const [notes, setNotes] = useState(appointment.notes || "");
+  const [hasRated, setHasRated] = useState(false);
+  const [showRatingForm, setShowRatingForm] = useState(false);
 const router = useRouter()
 
   const {
@@ -124,6 +128,21 @@ if (tokenData?.success) {
 }
 }, [tokenData, appointment.id]);
 
+// Check if patient has already rated this appointment
+useEffect(() => {
+  if (userRole === "PATIENT" && appointment.status === "COMPLETED") {
+    const checkRating = async () => {
+      try {
+        const { hasRated: alreadyRated } = await checkExistingRating(appointment.id);
+        setHasRated(alreadyRated);
+      } catch (error) {
+        console.error("Error checking rating:", error);
+      }
+    };
+    checkRating();
+  }
+}, [appointment.id, appointment.status, userRole]);
+
  return (
     <>
             <Card className="border-emerald-900/20 hover:border-emerald-700/30 transition-all">
@@ -198,6 +217,30 @@ if (tokenData?.success) {
                         )}
 
                     </Button>
+                )}
+
+                {/* Rating Button for completed appointments */}
+                {userRole === "PATIENT" && appointment.status === "COMPLETED" && !hasRated && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowRatingForm(true)}
+                    className="border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10"
+                  >
+                    <Star className="h-4 w-4 mr-1" />
+                    Rate Doctor
+                  </Button>
+                )}
+
+                {/* Already Rated Badge */}
+                {userRole === "PATIENT" && appointment.status === "COMPLETED" && hasRated && (
+                  <Badge
+                    variant="outline"
+                    className="bg-yellow-900/20 border-yellow-900/30 text-yellow-400"
+                  >
+                    <Star className="h-3 w-3 mr-1" />
+                    Rated
+                  </Badge>
                 )}
 
                 <Button
@@ -344,6 +387,29 @@ if (tokenData?.success) {
                 </div>
             </DialogContent>
             </Dialog>
+
+            {/* Rating Form Dialog */}
+            {showRatingForm && (
+              <Dialog open={showRatingForm} onOpenChange={setShowRatingForm}>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-bold text-white">
+                      Rate Your Experience
+                    </DialogTitle>
+                    <DialogDescription>
+                      Share your feedback about your consultation with Dr. {appointment.doctor.name}
+                    </DialogDescription>
+                  </DialogHeader>
+                                     <RatingForm
+                     appointment={appointment}
+                     onRatingSubmitted={() => {
+                       setShowRatingForm(false);
+                       setHasRated(true);
+                     }}
+                   />
+                </DialogContent>
+              </Dialog>
+            )}
             </> 
 
  );

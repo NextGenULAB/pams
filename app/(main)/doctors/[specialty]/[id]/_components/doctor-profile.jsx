@@ -27,8 +27,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import SlotPicker from "./slot-picker";
 import AppointmentForm from "./appointment-form";
 import { useRouter } from "next/navigation";
+import RatingDisplay from "@/components/rating-display";
 
-const DoctorProfile = ({ doctor, availableDays }) => {
+const DoctorProfile = ({ doctor, availableDays, ratingStats, ratings }) => {
   const [showBooking, setShowBooking] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const router = useRouter();
@@ -161,6 +162,9 @@ const DoctorProfile = ({ doctor, availableDays }) => {
             )}
           </CardContent>
         </Card>
+
+        {/* Ratings Display */}
+        <RatingDisplay ratingStats={ratingStats} ratings={ratings} />
 
         {showBooking && (
           <div id="booking-section">

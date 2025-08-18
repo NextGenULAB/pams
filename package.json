@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "prebuild": "prisma generate",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -16,7 +17,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@hookform/resolvers": "^5.2.1",
-    "@prisma/client": "^6.12.0",
+    "@prisma/client": "6.13.0",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-select": "^2.2.5",
@@ -46,7 +47,7 @@
     "@tailwindcss/postcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
-    "prisma": "^6.13.0",
+    "prisma": "6.13.0",
     "tailwindcss": "^4.1.11",
     "tw-animate-css": "^1.3.5"
   }

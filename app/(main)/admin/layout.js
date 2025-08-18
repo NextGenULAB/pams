@@ -1,4 +1,4 @@
-import { verifyAdmin } from "@/actions/admin"; //adminimport { verifyAdmin } from "@/actions/admin";
+import { verifyAdmin } from "@/actions/admin";
 import { redirect } from "next/navigation";
 import PageHeader from "@/components/page-header";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,15 +29,15 @@ const AdminLayout = async ({ children }) => {
             value="pending"
             className="flex-1 md:flex md:items-center md:justify-start md:px-4 md:py-3 w-full"
           >
-            <AlertCircle className=" h-4 w-4 mr-2 hidden md:inline" />
-            <span> Pending Verification</span>
+            <AlertCircle className="h-4 w-4 mr-2 hidden md:inline" />
+            <span>Pending Verification</span>
           </TabsTrigger>
           <TabsTrigger
             value="doctors"
             className="flex-1 md:flex md:items-center md:justify-start md:px-4 md:py-3 w-full"
           >
             <Users className="h-4 w-4 mr-2 hidden md:inline" />
-            <span> Doctors</span>
+            <span>Doctors</span>
           </TabsTrigger>
           <TabsTrigger
             value="payouts"
@@ -46,18 +46,11 @@ const AdminLayout = async ({ children }) => {
             <CreditCard className="h-4 w-4 mr-2 hidden md:inline" />
             <span>Payouts</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="ratings"
-            className="flex-1 md:flex md:items-center md:justify-start md:px-4 md:py-3 w-full"
-          >
-            <Star className="h-4 w-4 mr-2 hidden md:inline" />
-            <span>Ratings</span>
-          </TabsTrigger>
         </TabsList>
         <div className="md:col-span-3">{children}</div>
       </Tabs>
     </div>
   );
-};
+}
 
 export default AdminLayout;

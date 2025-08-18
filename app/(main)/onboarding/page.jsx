@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button"; 
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"; 
-import { User, Stethoscope, Loader2 } from "lucide-react"; 
+import { User, Stethoscope, Loader2, ArrowRight } from "lucide-react"; 
 import { setUserRole } from "@/actions/onboarding";
 import { useRouter } from "next/navigation";
 import useFetch from "@/hooks/use-fetch";
@@ -90,174 +90,216 @@ const OnboardingPage = () => {
  
  if (step === "choose-role"){ 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <Card onClick= {()=> !loading && handlePatientSelection()} className = "border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all">
-        
-        <CardContent className = "pt-6 pb-6 flex flex-col items-center text-center">
-            <div className="p-4 bg-emerald-900/20 rounded-full mb-4">
-            <User className ="h-8 w-8 text-emerald-400"/>
+        <div className="container mx-auto px-4 py-12">
+            <div className="text-center mb-12">
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 animate-fade-in-up">
+                    Choose Your Role
+                </h1>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+                    Select how you'd like to use our healthcare platform
+                </p>
             </div>
-           <CardTitle className= "text-xl font-semibold text-white mb-2">
-            Join as a Patient
-            </CardTitle>
-            <CardDescription className="mb-4">
-                Book appointments,consult with doctors, and manage your healthcare journey
-            </CardDescription>
-            <Button className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
-                { loading? (
-                    <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing... </>
-                     ) : ("Continue as a Patient") }
-                     </Button>
-        </CardContent>
-    </Card> 
-    
-     <Card
-     onClick={()=> !loading && setStep("doctor-form")}
-     className = "border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all">
-        
-        <CardContent className = "pt-6 pb-6 flex flex-col items-center text-center">
-            <div className="p-4 bg-emerald-900/20 rounded-full mb-4">
-            <Stethoscope className ="h-8 w-8 text-emerald-400"/>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <Card 
+                    onClick={() => !loading && handlePatientSelection()} 
+                    className="border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-emerald-900/50 group animate-fade-in-up"
+                    style={{ animationDelay: "400ms" }}
+                >
+                    <CardContent className="pt-8 pb-8 flex flex-col items-center text-center">
+                        <div className="p-6 bg-emerald-900/20 rounded-full mb-6 group-hover:bg-emerald-800/30 transition-all duration-300 group-hover:scale-110 transform">
+                            <User className="h-10 w-10 text-emerald-400"/>
+                        </div>
+                        <CardTitle className="text-2xl font-semibold text-white mb-4 group-hover:text-emerald-400 transition-colors duration-300">
+                            Join as a Patient
+                        </CardTitle>
+                        <CardDescription className="mb-6 text-base">
+                            Book appointments, consult with doctors, and manage your healthcare journey
+                        </CardDescription>
+                        <Button 
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/25 group" 
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                                    Processing... 
+                                </>
+                            ) : (
+                                <>
+                                    Continue as Patient
+                                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </>
+                            )}
+                        </Button>
+                    </CardContent>
+                </Card> 
+                
+                <Card
+                    onClick={() => !loading && setStep("doctor-form")}
+                    className="border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-emerald-900/50 group animate-fade-in-up"
+                    style={{ animationDelay: "600ms" }}
+                >
+                    <CardContent className="pt-8 pb-8 flex flex-col items-center text-center">
+                        <div className="p-6 bg-emerald-900/20 rounded-full mb-6 group-hover:bg-emerald-800/30 transition-all duration-300 group-hover:scale-110 transform">
+                            <Stethoscope className="h-10 w-10 text-emerald-400"/>
+                        </div>
+                        <CardTitle className="text-2xl font-semibold text-white mb-4 group-hover:text-emerald-400 transition-colors duration-300">
+                            Join as a Doctor
+                        </CardTitle>
+                        <CardDescription className="mb-6 text-base">
+                            Create your professional profile, set your availability, and provide consultations
+                        </CardDescription>
+                        <Button 
+                            disabled={loading}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/25 group"
+                        >
+                            Continue as Doctor
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                        </Button>
+                    </CardContent>
+                </Card> 
             </div>
-           <CardTitle className= "text-xl font-semibold text-white mb-2">
-            Join as a Doctor
-            </CardTitle>
-            <CardDescription className="mb-4">
-                Create your profession profile, set your availability, and provide consultations
-            </CardDescription>
-            <Button disabled={loading}
-            className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700">
-                Continue as a Doctors
-                </Button>
-        </CardContent>
-    </Card> 
-    </div>
+        </div>
     );
  }
+ 
  if (step === "doctor-form"){
     return (
-    <Card
-     className = "border-emerald-900/20">
-        
-        <CardContent className = "pt-6">
-            <div className="mb-6">
-            
-           <CardTitle className= "text-2xl font-bold text-white mb-2">
-            Complete Your Profile!
-            </CardTitle>
-            <CardDescription >
-                Please provide your professional details and verification
-            </CardDescription>
-            </div>
-
-            <form className="space-y-6" onSubmit={handleSubmit(OnDoctorSubmit)}>
-                <div className="space-y-2">
-            <Label htmlFor="speciality">Medical Speciality</Label>
-            <Select 
-                value={specialityValue}
-            onValueChange={(value) => setValue("speciality", value)}>
-                <SelectTrigger id="speciality">
-                    <SelectValue placeholder="select your speciality" />
-                </SelectTrigger>
-                <SelectContent>
-                    {SPECIALTIES.map((spec)=>{
-                    return (<SelectItem
-                         key={spec.name}
-                        value={spec.name}
-                          label={spec.name}
-                    ><div className="flex items-center gap-2">
-                     <span className="text-emerald-400"> {spec.icon} </span>
-                     {spec.name}  
-                     </div>
-                    </SelectItem>
-                    );
-                    })}
-                  </SelectContent>
-                </Select>
-                {errors.speciality && (
-                    <p className="text-sm font-medium text-red-500 mt-1">
-                    {errors.speciality.message}
+        <div className="container mx-auto px-4 py-12">
+            <div className="max-w-3xl mx-auto">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 animate-fade-in-up">
+                        Complete Your Profile
+                    </h1>
+                    <p className="text-muted-foreground text-lg animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+                        Please provide your professional details for verification
                     </p>
-                    )}
                 </div>
+                
+                <Card className="border-emerald-900/20 hover:border-emerald-800/40 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-900/20 animate-fade-in-up" style={{ animationDelay: "400ms" }}>
+                    <CardContent className="pt-8">
+                        <form className="space-y-6" onSubmit={handleSubmit(OnDoctorSubmit)}>
+                            <div className="space-y-2">
+                                <Label htmlFor="speciality" className="text-white font-medium">Medical Specialty</Label>
+                                <Select 
+                                    value={specialityValue}
+                                    onValueChange={(value) => setValue("speciality", value)}
+                                >
+                                    <SelectTrigger id="speciality" className="border-emerald-900/30 focus:border-emerald-700/50">
+                                        <SelectValue placeholder="Select your specialty" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-background border-emerald-900/30">
+                                        {SPECIALTIES.map((spec) => {
+                                            return (
+                                                <SelectItem
+                                                    key={spec.name}
+                                                    value={spec.name}
+                                                    label={spec.name}
+                                                >
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-emerald-400">{spec.icon}</span>
+                                                        {spec.name}  
+                                                    </div>
+                                                </SelectItem>
+                                            );
+                                        })}
+                                    </SelectContent>
+                                </Select>
+                                {errors.speciality && (
+                                    <p className="text-sm font-medium text-red-500 mt-1">
+                                        {errors.speciality.message}
+                                    </p>
+                                )}
+                            </div>
 
-            <div className="space-y-2">
-            <Label htmlFor="experience">Years of Experience</Label>
-             <Input 
-                id="experience" 
-                type="number" 
-                placeholder="eg. 5"
-             {...register ("experience", {valueAsNumber: true})}
-             />
-                {errors.experience && (
-                    <p className="text-sm font-medium text-red-500 mt-1">
-                    {errors.experience.message}
-                    </p>
-                    )}
+                            <div className="space-y-2">
+                                <Label htmlFor="experience" className="text-white font-medium">Years of Experience</Label>
+                                <Input 
+                                    id="experience" 
+                                    type="number" 
+                                    placeholder="e.g. 5"
+                                    className="border-emerald-900/30 focus:border-emerald-700/50"
+                                    {...register("experience", {valueAsNumber: true})}
+                                />
+                                {errors.experience && (
+                                    <p className="text-sm font-medium text-red-500 mt-1">
+                                        {errors.experience.message}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="credentialUrl" className="text-white font-medium">Link to Credential Documents</Label>
+                                <Input 
+                                    id="credentialUrl" 
+                                    type="url" 
+                                    placeholder="https://example.com/medical-degree.pdf"
+                                    className="border-emerald-900/30 focus:border-emerald-700/50"
+                                    {...register("credentialUrl")}
+                                />
+                                {errors.credentialUrl && (
+                                    <p className="text-sm font-medium text-red-500 mt-1">
+                                        {errors.credentialUrl.message}
+                                    </p>
+                                )}
+                                <p className="text-sm text-muted-foreground">
+                                    Please provide a link to your medical degree or certification
+                                </p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="description" className="text-white font-medium">Description of Your Services</Label>
+                                <Textarea 
+                                    id="description" 
+                                    placeholder="Describe your expertise, services, and approach towards patient care"
+                                    rows="6"
+                                    className="border-emerald-900/30 focus:border-emerald-700/50"
+                                    {...register("description")}
+                                />
+                                {errors.description && (
+                                    <p className="text-sm font-medium text-red-500 mt-1">
+                                        {errors.description.message}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="pt-4 flex items-center justify-between">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setStep("choose-role")}
+                                    className="border-emerald-900/30 hover:bg-muted/80 transition-all duration-300"
+                                    disabled={loading}
+                                >
+                                    Back
+                                </Button>
+
+                                <Button 
+                                    type="submit"
+                                    className="bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/25 group"
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                                            Submitting... 
+                                        </>
+                                    ) : (
+                                        <>
+                                            Submit for Verification
+                                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
-
-            <div className="space-y-2">
-            <Label htmlFor="credentialUrl">Link to Credential Documents</Label>
-             <Input 
-                id="credentialUrl" 
-                type="url" 
-                placeholder="medical-degree.pdf"
-             {...register ("credentialUrl")}
-             />
-                {errors.credentialUrl && (
-                    <p className="text-sm font-medium text-red-500 mt-1">
-                    {errors.credentialUrl.message}
-                    </p>
-                    )}
-
-                    <p className="text-sm text-muted-foreground">
-                    NB: Please provide a link to your medical degree or certification
-                    </p>
-            </div>
-
-            <div className="space-y-2">
-            <Label htmlFor="description">Description of your services</Label>
-             <Textarea 
-                id="description" 
-                placeholder="Describe your experties, services and approach towards parient care"
-                rows="6"
-             {...register ("description")}
-             />
-                {errors.description && (
-                    <p className="text-sm font-medium text-red-500 mt-1">
-                    {errors.description.message}
-                    </p>
-                    )}
-            </div>
-
-            <div className="pt-2 flex items-center justify-between">
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setStep("choose-role")}
-                    className="border-emerald-900/30"
-                     disabled={loading}
-                >
-                    Back</Button>
-
-                <Button type="submit"
-                className="bg-emerald-600 hover:bg-emerald-300"
-                disabled={loading}>
-                   { loading? (
-                    <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                    Submitting... 
-                    </>
-                     ) : ("Submit for verification") }
-                </Button>
-            </div>
-
-            </form>
-        </CardContent>
-    </Card>
+        </div>
     );
  }
 };
 
-export default  OnboardingPage;
+export default OnboardingPage;
